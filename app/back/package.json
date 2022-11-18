@@ -9,7 +9,8 @@
     "db:reset": "npx -y tsc && npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
     "dev": "nodemon --watch 'src/' --exec 'ts-node src/app.ts' -e ts",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles",
+    "lint":"eslint"
   },
   "keywords": [],
   "author": "",
