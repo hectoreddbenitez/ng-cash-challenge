@@ -8,7 +8,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       balance: {
-        allowNull: false,
+        defaultValue: 100.00,
         type: Sequelize.DECIMAL(10,2)
       }
     });

@@ -15,7 +15,6 @@ Accounts.init({
     type: INTEGER,
   },
   balance: {
-    allowNull: false,
     type: DECIMAL(10,2)
   }
 }, {

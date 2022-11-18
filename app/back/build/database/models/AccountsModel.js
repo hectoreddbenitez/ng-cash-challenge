@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const _1 = __importDefault(require("."));
-const TransactionsModels_1 = __importDefault(require("./TransactionsModels"));
+const TransactionsModel_1 = __importDefault(require("./TransactionsModel"));
 class Accounts extends sequelize_1.Model {
 }
 Accounts.init({
@@ -16,7 +16,6 @@ Accounts.init({
         type: sequelize_1.INTEGER,
     },
     balance: {
-        allowNull: false,
         type: (0, sequelize_1.DECIMAL)(10, 2)
     }
 }, {
@@ -25,10 +24,10 @@ Accounts.init({
     modelName: 'accounts',
     timestamps: false,
 });
-Accounts.hasMany(TransactionsModels_1.default, { foreignKey: 'debited_account_id' });
-Accounts.hasMany(TransactionsModels_1.default, { foreignKey: 'credited_account_id' });
-TransactionsModels_1.default.belongsTo(Accounts, { foreignKey: 'debited_account_id' });
-TransactionsModels_1.default.belongsTo(Accounts, { foreignKey: 'debited_account_id' });
+Accounts.hasMany(TransactionsModel_1.default, { foreignKey: 'debited_account_id' });
+Accounts.hasMany(TransactionsModel_1.default, { foreignKey: 'credited_account_id' });
+TransactionsModel_1.default.belongsTo(Accounts, { foreignKey: 'debited_account_id' });
+TransactionsModel_1.default.belongsTo(Accounts, { foreignKey: 'debited_account_id' });
 // OtherModel.belongsTo(Example, { foreignKey: 'campoA', as: 'campoEstrangeiroA' });
 // OtherModel.belongsTo(Example, { foreignKey: 'campoB', as: 'campoEstrangeiroB' });
 // Example.hasMany(OtherModel, { foreignKey: 'campoC', as: 'campoEstrangeiroC' });
