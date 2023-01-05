@@ -38,4 +38,8 @@ Transactions.init({
     modelName: 'transactions',
     timestamps: false,
 });
+// Accounts.hasMany(Transactions, { foreignKey: 'debitedAccountId', as: 'debitAccount' });
+// Accounts.hasMany(Transactions, { foreignKey: 'creditedAccountId', as: 'creditAccount' });
+// Transactions.belongsTo(Accounts, { foreignKey: 'id', as: 'creditAccountId' });
+// Transactions.belongsTo(Accounts, { foreignKey: 'id', as: 'debitAccountId' });
 exports.default = Transactions;

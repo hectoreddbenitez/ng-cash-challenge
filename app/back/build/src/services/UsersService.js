@@ -13,57 +13,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const UsersModel_1 = __importDefault(require("../database/models/UsersModel"));
-const AccountsServices_1 = __importDefault(require("./AccountsServices"));
+const AccountsService_1 = __importDefault(require("./AccountsService"));
 const Error_1 = __importDefault(require("../interfaces/Error"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class UsersService {
-    static create(username, password) {
+    static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userAllreadyExist = yield this.findByName(username);
+            const { username, password } = data;
+            const userAllreadyExist = yield UsersModel_1.default.findOne({ where: { username } });
             if (userAllreadyExist) {
-                return ({ status: 409, message: 'Opss! parece que esse nome já está em uso' });
+                return new Error_1.default('Oops! It looks like a user with that name already exists', 401);
             }
             ;
-            const { id } = yield AccountsServices_1.default.create();
+            const { id } = yield AccountsService_1.default.create();
             const passwordHash = bcryptjs_1.default.hashSync(password, 10);
             const newUser = yield UsersModel_1.default.create({
                 username,
                 password: passwordHash,
                 accountId: id,
             });
-            return newUser;
+            const { id: userId } = newUser;
+            const newUserWithoutPass = { userId, username, accountId: id };
+            return newUserWithoutPass;
         });
     }
-    static authenticate(username, pass) {
+    static authenticate(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { username, password } = data;
             const user = yield UsersModel_1.default.findOne({ where: { username } });
             if (!user) {
-                const errorPayload = new Error_1.default('O usuario ou senha estão errados', 401);
-                return errorPayload;
+                return new Error_1.default('The username or password is wrong', 401);
             }
             const passwordDb = user.password;
-            const passwordIsOk = bcryptjs_1.default.compareSync(pass, passwordDb);
-            if (!passwordIsOk) {
-                const errorPayload = new Error_1.default('O usuario ou senha estão errados', 401);
-                return errorPayload;
+            const passwordIsOk = bcryptjs_1.default.compareSync(password, passwordDb);
+            if (passwordIsOk === false) {
+                return new Error_1.default('The username or password is wrong', 401);
             }
-            const { id } = user;
-            const userToReturn = { id, username };
-            return userToReturn;
+            return user;
+        });
+    }
+    static findByName(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield UsersModel_1.default.findOne({ where: { username: name } });
+            console.log('AQUI O USER', user);
+            if (!user) {
+                return new Error_1.default('No existe', 400);
+            }
+            const { id, username, account_id } = user;
+            return { id, username, account_id };
         });
     }
     static findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const userList = yield UsersModel_1.default.findAll({ raw: true });
-            return userList;
-        });
-    }
-    static findByName(username) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield UsersModel_1.default.findOne({ where: { username } });
-            if (!user) {
-            }
-            ;
+            const user = yield UsersModel_1.default.findAll({ raw: true });
+            console.log('aqui o user', user);
             return user;
         });
     }

@@ -7,14 +7,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require("dotenv/config");
 const SECRET = process.env.JWT_SECRET;
 class JwtHelper {
-    static tokenGenerator(user) {
-        const token = jsonwebtoken_1.default.sign({ data: user }, SECRET, { expiresIn: '24h', algorithm: 'HS256', });
+    static tokenGenerator(data) {
+        const { id, username } = data;
+        const token = jsonwebtoken_1.default.sign({ data: { id, username } }, SECRET, {
+            expiresIn: '24h',
+            algorithm: 'HS256',
+        });
         return token;
-    }
-    static tokenValidator(token) {
-        const decoded = jsonwebtoken_1.default.verify(token, SECRET);
-        const { username } = decoded.data;
-        return username;
     }
 }
 exports.default = JwtHelper;
