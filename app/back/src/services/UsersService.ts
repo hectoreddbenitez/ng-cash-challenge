@@ -1,16 +1,19 @@
 import UsersModel from '../database/models/UsersModel';
-import AccountsService from './AccountsServices';
+import AccountsService from './AccountsService';
 import ErrorCode from '../interfaces/Error';
 import bcrypt from 'bcryptjs'
+import IUsers from '../interfaces/Users';
+import Users from '../database/models/UsersModel';
 
 export default class UsersService {
 
-  static async create(username: string, password: string) {
+  static async create(data: IUsers) {
+    const {username, password } = data;
 
     const userAllreadyExist = await UsersModel.findOne({where : {username}});
 
     if (userAllreadyExist) {
-      return ({status: 409, message: 'Opss! parece que já existe um usuario com esse nome'})
+      return new ErrorCode('Oops! It looks like a user with that name already exists', 401)
     };
     const { id } = await AccountsService.create();
     const passwordHash = bcrypt.hashSync(password, 10);
@@ -24,30 +27,38 @@ export default class UsersService {
     return newUserWithoutPass;
   }
 
-  static async authenticate(username: string, pass: string) {
+  static async authenticate(data: IUsers) {
+    const {username, password} = data;
     const user = await UsersModel.findOne({ where: { username } })
 
     if(!user) {
-      const errorPayload = new ErrorCode('O usuario ou senha estão errados', 401);
-      return errorPayload;
+      return new ErrorCode('The username or password is wrong', 401);
     }
 
     const passwordDb = user.password;
-    const passwordIsOk = bcrypt.compareSync(pass, passwordDb);
+    const passwordIsOk = bcrypt.compareSync(password, passwordDb);
 
     if(passwordIsOk === false) {
-      const errorPayload = new ErrorCode('O usuario ou senha estão errados', 401);
-      return errorPayload;
+      return new ErrorCode('The username or password is wrong', 401);
     }
 
-    const { id } = user;
-    const userToReturn = {id, username}
-
-    return userToReturn;
+    return user;
   }
 
-  static async findAll() {
-    const userList = await UsersModel.findAll({ raw: true});
-    return userList;
+  static async findByName(name: string) {
+    const user = await UsersModel.findOne({where: {username: name}});
+    console.log('AQUI O USER', user);
+
+    if(!user) {
+      return new ErrorCode('No existe', 400);
+    }
+    const {id, username, account_id} = user;
+    return {id, username, account_id};
+  }
+
+  static async findAll () {
+    const user = await UsersModel.findAll({raw: true});
+    console.log('aqui o user', user);
+    return  user;
   }
 }
