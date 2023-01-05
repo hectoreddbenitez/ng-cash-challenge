@@ -8,30 +8,33 @@ class Users extends Model {
   declare account_id: number;
 }
 
-Users.init({
-  id: {
-    type: INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
+Users.init(
+  {
+    id: {
+      type: INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    username: {
+      allowNull: false,
+      type: STRING(30),
+    },
+    password: {
+      type: STRING(60),
+      allowNull: false,
+    },
+    accountId: {
+      type: INTEGER,
+      allowNull: false,
+    },
   },
-  username: {
-    allowNull: false,
-    type: STRING(30),
-  },
-  password: {
-    type: STRING(60),
-    allowNull: false,
-  },
-  accountId: {
-    type: INTEGER,
-    allowNull: false,
-  },
-}, {
-  underscored: true,
-  sequelize: db,
-  modelName: 'users',
-  timestamps: false,
-});
+  {
+    underscored: true,
+    sequelize: db,
+    modelName: 'users',
+    timestamps: false,
+  }
+);
 
 export default Users;
